@@ -3,9 +3,10 @@
 > Read before creating or renaming anything, so all agents stay consistent.
 
 ## Naming
-- **Workflows:** [ FILL IN — e.g. "Club PR - Flow [Letter] - [Purpose]" ]
-- **Nodes inside a flow:** [ FILL IN — e.g. verb-first: "Fetch news", "Generate script" ]
-- **Credentials:** [ FILL IN — e.g. "platform-account", like "IG-main" ]
+- **Workflows:** `Club PR - Flow [Letter] - [Purpose]` — confirmed in use (e.g. "Club PR - Flow B - Reactive Reel Generation").
+- **Nodes inside a flow:** Plain-English, verb/question style: action nodes are verb-first ("Build Zoompan Video URL", "Notify Manual Review"), branch nodes are phrased as yes/no questions ("Is Image?", "QC Pass?", "Is Video For Posting?").
+- **Credentials:** Descriptive, project-prefixed where it's an external API — e.g. "Club PR - Groq API"; plain service name for generic ones — e.g. "Google Sheets account".
+- **Sheet columns:** lower_snake_case (e.g. `fast_track`, `cloudinary_public_id`, `overlay_zone`).
 - **Files in this KB:** `NN-topic.md` (numbered, lowercase, dashes)
 
 ## Do
