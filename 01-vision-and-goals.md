@@ -3,15 +3,17 @@
 > The "why" behind the project. Everything else — every flow, every agent, every person — serves this.
 
 ## North Star (long-term goal)
-Build and run **multiple keyword-rich Instagram pages** that publish daily club-related content (stories, reels, and evergreen posts). People discover the pages, engage, and reach out — those inquiries become **leads**. Each lead (a club / PR) is handed over **free at first to prove value, then converted into a paying client.** In short: the Instagram pages are a lead-generation engine for a club-PR business, and the automation exists to run that engine at scale with almost no manual work.
+Build and run **multiple SEO-optimised Instagram pages** that publish daily club-related content (stories, reels, and evergreen posts). People discover the pages, engage, and reach out — those inquiries become **leads**. Leads are handed to **PR people Ashna personally knows, free for some time to build the relationship, then converted into paying clients.** In short: the Instagram pages are a lead-generation engine for a club-PR business, and the automation exists to run that engine at scale with almost no manual work.
+
+> ⚠️ **SEO = best practices, NOT keyword stuffing.** Content and pages are optimised for discovery the right way (clean captions, natural keywords, good hashtags, strong content). No stuffing, no spammy tactics — quality first.
 
 ## The funnel (how the goal actually works)
-1. **Publish** — keyword-rich IG pages post daily club stories, reels, and evergreen content.
-2. **Discover & engage** — users find the pages (via keywords/hashtags) and watch/interact.
+1. **Publish** — SEO-optimised IG pages post daily club stories, reels, and evergreen content (best-practice, no stuffing).
+2. **Discover & engage** — users find the pages naturally (search, keywords, hashtags) and watch/interact.
 3. **Contact** — interested users reach out.
-4. **Lead** — that contact becomes a lead for a club / PR.
-5. **Free trial** — the lead is given to a club for free first, to prove the value.
-6. **Monetize** — once value is shown, start charging the club. 💰
+4. **Lead** — that contact becomes a lead.
+5. **Hand off (free at first)** — Ashna passes leads to PR people she personally knows, **free for some time** to build the relationship and prove value.
+6. **Monetize** — once value is shown, start charging. 💰
 
 ## Where we are today (Sept 2026)
 - Content pipeline is **semi-automated**: images/videos are sent into a **Telegram channel**, then edited and turned into posts.
@@ -19,19 +21,20 @@ Build and run **multiple keyword-rich Instagram pages** that publish daily club-
 - **Posting is still manual** — Ashna posts the finished content herself for now.
 
 ## Objectives (the road to full automation)
-The end state is **~100% automation** of the publish side. Concretely, over time the system should also handle:
+The end state is **~100% automation** of the publish side, always following SEO/content best practices (never stuffing). Concretely, over time the system should also handle:
 - [ ] **Post-timing analysis** — figure out and schedule the best time to post.
-- [ ] **Hashtag strategy** — pick/rotate hashtags and track which ones actually work.
+- [ ] **Hashtag strategy** — pick/rotate relevant hashtags naturally and track which ones actually work (no spammy hashtag walls).
 - [ ] **Performance feedback loop** — measure what content is working vs. not, and feed that back into what gets made.
 - [ ] **Fully automated posting** — remove the manual posting step so content goes out end-to-end without Ashna.
 
 ## Success metrics
-- Number of keyword-rich IG pages live and posting daily.
+- Number of SEO-optimised IG pages live and posting daily.
 - Inbound contacts → leads generated per page.
-- Leads → free trials → **paying clients** (the real bottom line).
+- Leads → free hand-offs to known PR people → **paying clients** (the real bottom line).
 - % of the publish pipeline that runs without manual work (moving toward ~100%).
 
 ## Non-goals (to prevent scope creep)
+- **No keyword stuffing or spammy SEO/hashtag tactics** — discovery is earned through best practices and good content, not tricks.
 - Not building content tools from scratch where an existing service does the job (Cloudinary for video, Groq for AI, etc.).
 - Not chasing full automation at the cost of quality — the human/AI QC gate stays until automated quality is trusted.
 - [ FILL IN — add any others as they come up ]
