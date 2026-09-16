@@ -16,10 +16,10 @@ Build and run **multiple SEO-optimised Instagram pages** that publish daily club
 6. **Monetize** — once value is shown, start charging. 💰
 
 ## Where we are today (Sept 2026)
-- The pipeline is **largely built**: 4 connected n8n flows (A→B/C→D, see `04-workflows.md`) cover intake+tagging, reel generation, evergreen listicles, and Instagram publishing.
-- Content enters by Ashna **sending images/videos into a Telegram bot**; AI (Groq) tags it, Cloudinary builds the media, and items queue up automatically.
-- **Publishing (Flow D) uses the Instagram Graph API and supports multiple pages** — but posting is still effectively **manual / being finalised**; Ashna posts herself for now while the auto-publish step is trusted.
-- **The gap to close:** timing/hashtag/performance intelligence and flipping the final posting step to fully automatic.
+- The pipeline **runs automatically end-to-end**: 4 connected n8n flows (A→B/C→D, see `04-workflows.md`) cover intake+tagging, reel generation, evergreen listicles, and Instagram publishing — **including posting, which is fully automated (Flow D posts to Instagram on its own).**
+- **Ashna's ONLY manual step is at the very start:** she reviews/curates images and videos herself, then sends them into the Telegram bot. After that she does **not** check anything — no manual QC, no manual posting. Her time is limited; the system is meant to run without her in the loop.
+- The AI (Groq) handles tagging, quality-checking, and captions automatically; Cloudinary builds the media; items queue and publish on their own.
+- **The gap to close:** not "turn on auto-posting" (that's already on) — it's the **intelligence layer**: post-timing analysis, hashtag performance, and a content feedback loop, moving quality toward "as good as her pre-screen" without her checking.
 
 ## Objectives (the road to full automation)
 The end state is **~100% automation** of the publish side, always following SEO/content best practices (never stuffing). Concretely, over time the system should also handle:

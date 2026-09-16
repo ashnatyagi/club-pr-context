@@ -9,10 +9,11 @@
 - [x] Which AI powers captions? → Groq API ("Club PR - Groq API").
 - [x] Is there evergreen content? → **Flow C - Evergreen Listicle Generation**.
 
+## Resolved (more)
+- [x] Is posting automated? → **Yes, fully automated.** Flow D posts to Instagram on its own; Ashna does no manual posting or checking. Her only manual step is pre-screening content before it enters Telegram.
+
 ## To decide
 - [ ] Exact Schedule Trigger intervals for Flows B, C, and D (how often each runs).
-- [ ] Live status of each flow — Flow D showed an un-toggled "Publish" button on 2026-09-16 (draft?). Confirm which flows are actually running vs. run manually.
-- [ ] Where does posting sit today: is Flow D running automatically, or is Ashna still posting by hand while Flow D is being finished?
 
 ## To build / TODO
 - [ ] Move toward the automation objectives in `01-vision-and-goals.md`: post-timing analysis, hashtag performance tracking, and a content performance feedback loop.

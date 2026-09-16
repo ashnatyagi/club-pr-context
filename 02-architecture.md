@@ -3,7 +3,7 @@
 > The big picture, in plain words. Update this whenever the shape of the system changes.
 
 ## One-paragraph summary
-The system is a 4-stage pipeline (Flows A→B/C→D) tied together by one Google Sheet, turning raw content Ashna sends into Telegram into finished Instagram posts across multiple pages, with as little manual work as possible. **Flow A** ingests + AI-tags content from Telegram and stores it. **Flow B** turns individual tagged assets into event-reactive reels; **Flow C** turns sets of assets into evergreen listicle posts. Both drop finished items into a "Posting Queue". **Flow D** reads that queue and publishes to Instagram via the Graph API. AI (Groq) does the tagging, quality-checking, and caption writing; Telegram is used for human alerts when something needs a look.
+The system is a 4-stage pipeline (Flows A→B/C→D) tied together by one Google Sheet, turning raw content Ashna sends into Telegram into finished Instagram posts across multiple pages — **fully automatically, including the posting step.** The ONLY human touch point is at the very start: Ashna pre-screens/curates the images and videos before sending them into the Telegram bot. After that there is no manual check and no manual posting. **Flow A** ingests + AI-tags content from Telegram and stores it. **Flow B** turns individual tagged assets into event-reactive reels; **Flow C** turns sets of assets into evergreen listicle posts. Both drop finished items into a "Posting Queue". **Flow D** reads that queue and publishes to Instagram via the Graph API. AI (Groq) does the tagging, quality-checking, and caption writing; Telegram is used for human alerts when something needs a look.
 
 ## The pipeline at a glance
 ```

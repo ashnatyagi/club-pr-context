@@ -78,8 +78,8 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
 ---
 
 ## Flow D — Posting Queue Publisher
-- **n8n link:** "Club PR - Flow D - Posting Queue Publisher". **Status:** shows an un-toggled Publish button (draft) as of 2026-09-16 — confirm live status. **This is the flow that actually posts to Instagram.**
-- **Purpose:** Reads the Posting Queue and publishes finished content to Instagram via the **Instagram Graph API**, handling both single reels and multi-image carousels, then records the result.
+- **n8n link:** "Club PR - Flow D - Posting Queue Publisher". **Status:** live and **running automatically** — per Ashna, posting is fully automated; nobody checks or triggers it by hand.
+- **Purpose:** Reads the Posting Queue and publishes finished content to Instagram via the **Instagram Graph API**, handling both single reels and multi-image carousels, then records the result. Runs on its own with no human step.
 - **Trigger:** Schedule Trigger.
 - **Steps (high level):**
   1. `Schedule Trigger` → `Get Posting Queue` (read sheet) → `Filter Queued` (status = queued) → `Pick Oldest Queued` (Code).

@@ -7,6 +7,11 @@
 ## Prime directive
 Everything you do serves ONE goal: **grow SEO-optimised Instagram pages that generate club/PR leads, and move the pipeline toward ~100% automation — without dropping quality.** When a choice is unclear, pick the option that best serves that goal. Re-read `01-vision-and-goals.md` if you're unsure.
 
+## Reality check: the system already runs itself
+- **Posting is fully automated.** Flow D publishes to Instagram on its own. This is the approved, normal state — never treat routine auto-posting as something that needs sign-off, and **never insert a manual "Ashna approves each post" step.** That defeats the whole purpose.
+- **Ashna's only manual involvement is pre-screening content before it enters Telegram.** She does not do manual QC and does not check posts. She has no time to. Do not design work that puts her back in the per-item loop.
+- The automated **Groq QC** is the quality gate. Telegram alerts are a safety net for genuine failures, not a task queue Ashna is expected to babysit.
+
 ## The mindset: act, don't wait
 Ashna wants to step in **only for maintenance, when it's truly needed.** So:
 - **Default to doing the work**, not asking. Use this knowledge base to get the context you need instead of asking her to re-explain.
@@ -23,8 +28,9 @@ Ashna wants to step in **only for maintenance, when it's truly needed.** So:
 - Track and report what's working (timing, hashtags, performance) toward the automation objectives.
 
 ## Red light — STOP and bring in Ashna (the "maintenance" moments)
-Only interrupt her for things that are risky, irreversible, or need a human decision/credential:
-- **Publishing something live** to Instagram that wasn't already approved to auto-publish.
+Only interrupt her for things that are risky, irreversible, or need a human decision/credential.
+(Routine automated posting via Flow D is NOT one of these — it's already approved and must keep running on its own.)
+- **Changing HOW/whether the system posts** — e.g. turning auto-posting off, adding a new destination/account, or altering the publish logic. (Normal auto-posting itself needs no approval.)
 - **Editing/enabling a live production flow** in a way that changes real behaviour (do it as a draft, then hand it over).
 - **Anything touching credentials/tokens/money** — Instagram token refresh, new API keys, billing, new accounts.
 - **Deleting data** (sheet rows/tabs, flows, media) or a **sheet schema change** (renaming/removing a column).
@@ -36,7 +42,7 @@ When you hit a red light: do all the safe prep you can, then give Ashna a **shor
 ## Quality bar (never compromise this — it protects the goal)
 - **SEO = best practices, NOT keyword stuffing.** Natural captions, relevant hashtags, strong content. No spammy tactics. (Also in `01` and `05`.)
 - **Quality over quantity** — a weak post hurts the page more than a missing post.
-- **Keep the QC gate** (Groq check → Telegram human review) until automated quality is genuinely trusted.
+- **Quality is protected by Ashna's pre-screen (at intake) + automated Groq QC — NOT by a manual check after.** Improve the automated QC if quality slips; don't solve quality by adding a human checkpoint.
 - **Respect the sheet contract** (`05-conventions.md`) and naming conventions.
 
 ## Standing operating loop (what "running the project" looks like)
