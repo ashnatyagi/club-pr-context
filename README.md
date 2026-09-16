@@ -56,5 +56,5 @@ AGENTS.md              the primer you paste into any new agent
 README.md              this file
 ```
 
-## Next: fill in the `[ FILL IN ]` blanks
-Most files have `[ FILL IN ]` placeholders. Spend 30–40 minutes filling them once — after that, you (or an agent) only edit small bits as things change.
+## Status: the base is filled in
+The knowledge base is complete and reflects the live system (all 5 Club PR flows documented, goal captured, autonomy layer in place). The only remaining open items are tracked in `09-open-questions.md` (e.g. exact schedule intervals, VPS backup plan) — small things to note as they're confirmed. From here, you (or an agent) just edit small bits as the project changes, and log each change in `07-changelog.md`.

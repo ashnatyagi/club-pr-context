@@ -10,11 +10,15 @@
 - **Files in this KB:** `NN-topic.md` (numbered, lowercase, dashes)
 
 ## Do
-- [ FILL IN — e.g. "Test in a duplicate flow before touching the live one" ]
+- **Test changes in a duplicated/draft flow** before touching a live one — don't edit a Published flow's real behaviour directly.
+- **Reuse existing `status` values and column names** (see the sheet contract below) rather than inventing parallel ones.
+- **Log every change** in `07-changelog.md` and update the relevant KB file.
+- **Fetch only the 1–2 relevant KB files** into an agent, not the whole thing (keeps tokens low).
 
 ## Don't
-- Don't put secrets/keys/tokens in these docs (only where they live).
-- [ FILL IN ]
+- Don't put secrets/keys/tokens in these docs (only ever name WHERE they live).
+- Don't rename or delete a Google Sheet column without checking every flow that uses it.
+- Don't add a manual "Ashna approves each post" step — posting is automated by design (see `10-operating-principles.md`).
 
 ## The Google Sheet is a shared contract
 Every flow reads/writes the one "Club PR - Asset Bank & Queue" sheet, so its columns are a contract shared across Flows A–D:

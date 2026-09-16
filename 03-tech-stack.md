@@ -21,4 +21,4 @@
 - The **Instagram access token expires** and Meta Graph API versions age out (currently v24.0) — these are the most likely things to silently break Flow D. Watch for it.
 - One Google Sheet is the whole database — a schema change (renaming/removing a column) can break multiple flows at once. Treat sheet columns as a shared contract (see `05-conventions.md`).
 - n8n Overview showed ~0.6% failure rate over ~12.7k executions as of 2026-09-16 — healthy, but check the Executions tab when something looks off.
-- [ FILL IN — add VPS-specific gotchas, e.g. restart schedule, backup plan, rate limits ]
+- VPS-specific gotchas (restart schedule, backup/restore plan, API rate limits) not yet documented — tracked in `09-open-questions.md`.

@@ -40,7 +40,7 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
      - **False:** `Prepare Video For Posting` (Code) → feeds back into the notify/posting path.
 - **Outputs / where results go:** Passing image reels land in the **"Posting Queue" tab** of the "Club PR - Asset Bank & Queue" Google Sheet (row shape from `Shape Posting Queue Row`: asset_id, club_name, event_name, event_date, area, source_type, final_media_url, media_type, qc_status, qc_reason, caption, hashtags, status='queued', created_at, posted_at). The source row's `status`/`times_used` columns on "Sheet1" are updated throughout; failures/reviews generate a Telegram message to a human (chat routed per club via `asset_id.split('_')[0]`).
 - **Depends on:** Google Sheets credential ("Google Sheets account"), Cloudinary account (`pemiahac`), Groq API credential ("Club PR - Groq API" — used for both QC and caption generation), Telegram credential ("Club PR - Telegram Bot"), and whatever upstream flow sets `status`/`fast_track`/`vibe_tag` on new "Sheet1" rows (likely "Flow A" — name/ID unconfirmed).
-- **Known issues:** [ FILL IN — none captured yet; add here as they come up ]
+- **Known issues:** None recorded yet — add here as they come up.
 - **Open questions:** What flow/process sets a row's initial `status`/`vibe_tag`/`overlay_zone` (Flow A)? What reads the "Posting Queue" tab to actually publish to Instagram/social? What is the Schedule Trigger's exact interval? Is `asset_id`'s prefix always a stable club identifier used consistently across flows?
 
 ---
@@ -58,7 +58,7 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
   4. `Append row in sheet` → writes a new row to **"Sheet1"** of "Club PR - Asset Bank & Queue" with all the AI tags + status.
 - **Outputs:** A new tagged row in "Sheet1" (the input Flow B reads).
 - **Depends on:** Telegram credential, Groq ("Club PR - Groq API"), Cloudinary, Google Sheets.
-- **Known issues:** [ FILL IN as they come up ]
+- **Known issues:** None recorded yet — add here as they come up.
 
 ---
 
@@ -73,7 +73,7 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
   4. `Shape Posting Queue Row` → `Append to Posting Queue`; also `Build time…/Update row in sheet` to record usage.
 - **Outputs:** New row(s) in the **"Posting Queue"** tab, ready for Flow D.
 - **Depends on:** Google Sheets, Groq ("Club PR - Groq API").
-- **Known issues:** [ FILL IN as they come up ]
+- **Known issues:** None recorded yet — add here as they come up.
 
 ---
 
@@ -90,14 +90,14 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
      - **Carousel (multi-image):** `Split Media URLs` → `Create Carousel Child` (+ `Warm Cloudinary Cache`) → `Aggregate Child IDs` → `Create Carousel Container` → `Publish Carousel` → `Shape Posted Update`.
 - **Outputs:** Live Instagram post; Posting Queue row marked `posted` (with `posted_at`) or `failed`.
 - **Depends on:** Google Sheets, **Instagram Graph API (credential "Club PR - Instagram Access Token", Bearer)**, Cloudinary (media URLs), Telegram (failure alerts). Each queue row carries its own `ig_account_id`, so **one flow publishes to multiple Instagram pages**.
-- **Known issues:** [ FILL IN as they come up ]
+- **Known issues:** None recorded yet — watch the Instagram token expiry / Graph API version (v24.0), the most likely silent break point.
 
 ---
 
 ## Setup — Upload BG Music Tracks
 - **n8n link:** "Club PR - Setup - Upload BG Music Tracks". **Status:** utility (not "Published" as a live loop).
 - **Purpose:** One-off / occasional helper to upload background music tracks (used to soundtrack reels). Run manually when new tracks are needed; not part of the daily pipeline.
-- **Known issues:** [ FILL IN ]
+- **Known issues:** None recorded yet.
 
 ---
 

@@ -37,5 +37,5 @@ The end state is **~100% automation** of the publish side, always following SEO/
 ## Non-goals (to prevent scope creep)
 - **No keyword stuffing or spammy SEO/hashtag tactics** — discovery is earned through best practices and good content, not tricks.
 - Not building content tools from scratch where an existing service does the job (Cloudinary for video, Groq for AI, etc.).
-- Not chasing full automation at the cost of quality — the human/AI QC gate stays until automated quality is trusted.
-- [ FILL IN — add any others as they come up ]
+- Not chasing full automation at the cost of quality — automated QC (and Ashna's pre-screen at intake) protects quality; no manual per-post checking.
+- Not putting Ashna back in the per-post loop — her time is limited by design.
