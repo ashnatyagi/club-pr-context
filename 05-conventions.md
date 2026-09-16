@@ -16,5 +16,11 @@
 - Don't put secrets/keys/tokens in these docs (only where they live).
 - [ FILL IN ]
 
+## The Google Sheet is a shared contract
+Every flow reads/writes the one "Club PR - Asset Bank & Queue" sheet, so its columns are a contract shared across Flows A–D:
+- **Don't rename or delete a column** without checking every flow that uses it — a change can break several flows at once.
+- Keep the two tabs distinct: **"Sheet1"** = intake/asset bank (Flow A writes, Flow B/C read), **"Posting Queue"** = output (Flow B/C write, Flow D reads).
+- `status` values seen in use: intake side `tagged` / `needs_review`; queue side `queued` / `posted` / `failed`. Reuse these, don't invent parallel ones.
+
 ## Secrets handling
-- All credentials live in [ FILL IN — n8n Credentials / a .env / a vault ], never in docs or chat.
+- All credentials live in **n8n Credentials** (e.g. "Club PR - Groq API", "Club PR - Telegram Bot", "Club PR - Instagram Access Token", "Google Sheets account"), never in docs or chat. This KB only ever names WHERE a credential lives, never its value.

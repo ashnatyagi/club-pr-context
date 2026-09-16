@@ -51,6 +51,7 @@ You can even make this a job: tell each agent "before you finish, update the cha
 07-changelog.md        dated history of changes
 08-glossary.md         terms & internal names
 09-open-questions.md   backlog, TODOs, risks
+10-operating-principles.md  how agents run the project autonomously (act vs. ask)
 AGENTS.md              the primer you paste into any new agent
 README.md              this file
 ```

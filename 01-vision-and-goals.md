@@ -16,9 +16,10 @@ Build and run **multiple SEO-optimised Instagram pages** that publish daily club
 6. **Monetize** — once value is shown, start charging. 💰
 
 ## Where we are today (Sept 2026)
-- Content pipeline is **semi-automated**: images/videos are sent into a **Telegram channel**, then edited and turned into posts.
-- The **n8n flows** (see `04-workflows.md`) handle tagging + reel generation + QC + queueing.
-- **Posting is still manual** — Ashna posts the finished content herself for now.
+- The pipeline is **largely built**: 4 connected n8n flows (A→B/C→D, see `04-workflows.md`) cover intake+tagging, reel generation, evergreen listicles, and Instagram publishing.
+- Content enters by Ashna **sending images/videos into a Telegram bot**; AI (Groq) tags it, Cloudinary builds the media, and items queue up automatically.
+- **Publishing (Flow D) uses the Instagram Graph API and supports multiple pages** — but posting is still effectively **manual / being finalised**; Ashna posts herself for now while the auto-publish step is trusted.
+- **The gap to close:** timing/hashtag/performance intelligence and flipping the final posting step to fully automatic.
 
 ## Objectives (the road to full automation)
 The end state is **~100% automation** of the publish side, always following SEO/content best practices (never stuffing). Concretely, over time the system should also handle:

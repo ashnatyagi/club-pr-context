@@ -3,6 +3,24 @@
 > One section per n8n workflow. Copy the template block for each new flow.
 > This is the file an agent reads when it's about to build or fix a specific flow.
 
+## The 5 Club PR flows (the whole pipeline)
+All flows are named `Club PR - Flow [Letter] - [Purpose]` and are **Published** on the n8n instance. They form one pipeline connected by a single Google Sheet ("Club PR - Asset Bank & Queue"):
+
+```
+Telegram (you send image/video)
+      │
+      ▼
+[Flow A] Intake & Tagging ──► writes tagged rows to Sheet "Sheet1"
+      │
+      ▼
+[Flow B] Reactive Reel Generation ──┐  (per-asset reels, event-driven)
+[Flow C] Evergreen Listicle Gen ────┤──► both APPEND to Sheet "Posting Queue"
+      │                              │
+      ▼                              ▼
+[Flow D] Posting Queue Publisher ──► publishes to Instagram (Graph API)
+```
+Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of the daily loop).
+
 ---
 
 ## Flow B — Reactive Reel Generation
@@ -27,16 +45,58 @@
 
 ---
 
-## Flow A — [ name ]
-- **n8n workflow ID / link:** [ FILL IN ]
-- **Status:** [ FILL IN ]
-- **Purpose:** [ FILL IN ]
-- **Trigger:** [ FILL IN ]
-- **Inputs it needs:** [ FILL IN ]
+## Flow A — Intake & Tagging
+- **n8n link:** open from the workflows list ("Club PR - Flow A - Intake & Tagging"). **Status:** Published.
+- **Purpose:** The front door. Takes raw content Ashna sends into Telegram, uses AI to auto-tag it (club, event, vibe, etc.), stores the media on Cloudinary, and writes a fully-tagged row into the sheet so the generation flows can act on it.
+- **Trigger:** Telegram Trigger (fires when a message/file is sent to the bot).
 - **Steps (high level):**
-  1. [ FILL IN ]
-- **Outputs / where results go:** [ FILL IN ]
-- **Depends on:** [ FILL IN ]
+  1. `Telegram Trigger` → `Get a file` (download the sent image/video).
+  2. `If` (is it an image?).
+     - **Image:** `Edit Image` (resize) → Code → `HTTP Request` to Groq (vision auto-tagging) → Code.
+     - **Video:** Code path → later `Build Thumbnail URL` → `Groq Video Tag` (HTTP to Groq on the thumbnail) → `Parse Video Tag Result`.
+  3. `Upload an asset from file data` → Cloudinary (gets the `cloudinary_public_id`).
+  4. `Append row in sheet` → writes a new row to **"Sheet1"** of "Club PR - Asset Bank & Queue" with all the AI tags + status.
+- **Outputs:** A new tagged row in "Sheet1" (the input Flow B reads).
+- **Depends on:** Telegram credential, Groq ("Club PR - Groq API"), Cloudinary, Google Sheets.
+- **Known issues:** [ FILL IN as they come up ]
+
+---
+
+## Flow C — Evergreen Listicle Generation
+- **n8n link:** "Club PR - Flow C - Evergreen Listicle Generation". **Status:** Published.
+- **Purpose:** Produces **evergreen** posts (e.g. listicle-style "round-ups" of multiple assets) rather than single event-reactive reels — the always-relevant content pillar of the goal.
+- **Trigger:** Schedule Trigger.
+- **Steps (high level):**
+  1. `Schedule Trigger` → `Get row(s) in sheet` → `Filter` (keep eligible assets).
+  2. `Select Listicle Assets` (Code — picks a set of assets to combine).
+  3. `Generate Listicle Caption` (HTTP to Groq).
+  4. `Shape Posting Queue Row` → `Append to Posting Queue`; also `Build time…/Update row in sheet` to record usage.
+- **Outputs:** New row(s) in the **"Posting Queue"** tab, ready for Flow D.
+- **Depends on:** Google Sheets, Groq ("Club PR - Groq API").
+- **Known issues:** [ FILL IN as they come up ]
+
+---
+
+## Flow D — Posting Queue Publisher
+- **n8n link:** "Club PR - Flow D - Posting Queue Publisher". **Status:** shows an un-toggled Publish button (draft) as of 2026-09-16 — confirm live status. **This is the flow that actually posts to Instagram.**
+- **Purpose:** Reads the Posting Queue and publishes finished content to Instagram via the **Instagram Graph API**, handling both single reels and multi-image carousels, then records the result.
+- **Trigger:** Schedule Trigger.
+- **Steps (high level):**
+  1. `Schedule Trigger` → `Get Posting Queue` (read sheet) → `Filter Queued` (status = queued) → `Pick Oldest Queued` (Code).
+  2. `Is Video?` (If) branches on media type.
+     - **Reel (video):** `Create Reels Container` (Instagram Graph API POST `graph.instagram.com/v24.0/{ig_account_id}/media`) → `Wait Before Status Check` → `Check Reels Status` → `Reel Ready?`
+       - **Ready:** `Publish Reel` → `Mark as Posted`.
+       - **Not ready / fail:** `Mark as Post Failed` → `Notify Post Failed` (Telegram) → `Shape Failed Update`.
+     - **Carousel (multi-image):** `Split Media URLs` → `Create Carousel Child` (+ `Warm Cloudinary Cache`) → `Aggregate Child IDs` → `Create Carousel Container` → `Publish Carousel` → `Shape Posted Update`.
+- **Outputs:** Live Instagram post; Posting Queue row marked `posted` (with `posted_at`) or `failed`.
+- **Depends on:** Google Sheets, **Instagram Graph API (credential "Club PR - Instagram Access Token", Bearer)**, Cloudinary (media URLs), Telegram (failure alerts). Each queue row carries its own `ig_account_id`, so **one flow publishes to multiple Instagram pages**.
+- **Known issues:** [ FILL IN as they come up ]
+
+---
+
+## Setup — Upload BG Music Tracks
+- **n8n link:** "Club PR - Setup - Upload BG Music Tracks". **Status:** utility (not "Published" as a live loop).
+- **Purpose:** One-off / occasional helper to upload background music tracks (used to soundtrack reels). Run manually when new tracks are needed; not part of the daily pipeline.
 - **Known issues:** [ FILL IN ]
 
 ---

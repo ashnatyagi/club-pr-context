@@ -30,8 +30,11 @@
 | `07-changelog.md` | Dated history of every change | You need to know what changed and when |
 | `08-glossary.md` | Terms, acronyms, internal names | You hit a word you don't recognise |
 | `09-open-questions.md` | Backlog, TODOs, unknowns, risks | You're looking for what's next / unresolved |
+| `10-operating-principles.md` | **How to run this project autonomously** — what to do without asking vs. when to pull in Ashna | **Always, if you're an agent doing work** — this is your rulebook |
 | `AGENTS.md` | The short "primer" you paste into any new agent | Setting up a new agent/thread |
 | `README.md` | How to host this + give agents access | Setting up / maintaining the KB |
+
+> **If you're an AI agent here to DO work (not just answer a question):** read `01-vision-and-goals.md` (the why) and `10-operating-principles.md` (how to act on your own) before you start. Those two make you useful without Ashna in the loop.
 
 ## How to load this into different tools
 

@@ -3,7 +3,24 @@
 > The big picture, in plain words. Update this whenever the shape of the system changes.
 
 ## One-paragraph summary
-Club-related assets (images/videos tied to clubs, events, and vibes) land in a Google Sheet — either tagged upstream (by another flow / a Telegram-fed tagging process, "source_type"/"vibe_tag"/"overlay_zone" columns suggest an upstream classification step) or manually. **Flow B ("Reactive Reel Generation")** runs on a schedule, pulls rows that are ready ("tagged" + fast-tracked, or "needs_review"), and for image assets: builds a Ken-Burns-style ("zoompan") video from the still image via Cloudinary, runs an AI vision QC pass (Groq) to check the text overlay/quality, generates an SEO caption, and — if QC passes — pushes the row into a "Posting Queue" and marks it posted; if QC fails, it notifies a human on Telegram for manual review. Non-image (video) assets go through a separate lighter path (notify + mark reviewed / prepare for posting).
+The system is a 4-stage pipeline (Flows A→B/C→D) tied together by one Google Sheet, turning raw content Ashna sends into Telegram into finished Instagram posts across multiple pages, with as little manual work as possible. **Flow A** ingests + AI-tags content from Telegram and stores it. **Flow B** turns individual tagged assets into event-reactive reels; **Flow C** turns sets of assets into evergreen listicle posts. Both drop finished items into a "Posting Queue". **Flow D** reads that queue and publishes to Instagram via the Graph API. AI (Groq) does the tagging, quality-checking, and caption writing; Telegram is used for human alerts when something needs a look.
+
+## The pipeline at a glance
+```
+You send content ──► [A] Intake & Tagging ──► Sheet "Sheet1" (tagged assets)
+                                                     │
+                          ┌──────────────────────────┴───────────────┐
+                          ▼                                            ▼
+              [B] Reactive Reel Generation              [C] Evergreen Listicle Generation
+                          │                                            │
+                          └──────────► Sheet "Posting Queue" ◄─────────┘
+                                                     │
+                                                     ▼
+                                   [D] Posting Queue Publisher ──► Instagram (Graph API)
+```
+
+## Flow B detail (per-asset reels)
+Below is the internals of Flow B specifically (the other flows are in `04-workflows.md`). It runs on a schedule, pulls rows that are ready ("tagged" + fast-tracked, or "needs_review"), and for image assets builds a Ken-Burns-style ("zoompan") video from the still image via Cloudinary, runs an AI vision QC pass (Groq) to check the text overlay/quality, generates an SEO caption, and — if QC passes — pushes the row into the "Posting Queue" and marks it posted; if QC fails, it notifies a human on Telegram for manual review. Non-image (video) assets go through a separate lighter path (notify + mark reviewed / prepare for posting).
 
 ## Data flow (end to end)
 1. **Trigger:** Schedule Trigger (n8n) — runs Flow B periodically.
@@ -31,8 +48,9 @@ Club-related assets (images/videos tied to clubs, events, and vibes) land in a G
 | Test / staging | none yet | — |
 
 ## Key external dependencies
-- **Google Sheets ("Club PR - Asset Bank & Queue")** — the central data store / queue for assets and their status, with an intake tab ("Sheet1") and an output tab ("Posting Queue").
-- **Cloudinary** (cloud name `pemiahac`) — image hosting + video generation (zoompan effect) from Cloudinary-hosted images.
-- **Groq API** (`api.groq.com`, credential "Club PR - Groq API") — vision-capable LLM used for automated QC of the generated reel.
-- **Telegram** — human-in-the-loop notifications (manual review requests, non-image asset alerts), routed to a per-club chat derived from the asset's ID prefix.
+- **Google Sheets ("Club PR - Asset Bank & Queue")** — the central data store / queue for the whole pipeline, with an intake tab ("Sheet1") and an output tab ("Posting Queue"). This sheet is the "database" every flow reads/writes.
+- **Cloudinary** (cloud name `pemiahac`) — media hosting + video generation (zoompan effect) + carousel image hosting.
+- **Groq API** (`api.groq.com`, credential "Club PR - Groq API") — the AI brain: used for intake auto-tagging (Flow A), reel QC (Flow B), and caption generation (Flows B & C).
+- **Instagram Graph API** (`graph.instagram.com/v24.0`, credential "Club PR - Instagram Access Token") — publishes reels and carousels (Flow D). Each row's `ig_account_id` picks which page it posts to → multi-page support.
+- **Telegram** — both an **input** (Flow A trigger: Ashna sends content into the bot) and an **alert channel** (Flows B & D notify a human when something needs review or a post fails), routed to a per-club chat derived from the asset's ID prefix.
 - **n8n** itself, self-hosted on the Bluehost VPS — if the VPS goes down, all flows stop.
