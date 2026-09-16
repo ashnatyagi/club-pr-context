@@ -4,7 +4,9 @@
 
 | Term | Meaning |
 |------|---------|
-| Club PR | [ FILL IN — the brand / client / project this is all for; automation generates PR/social content for clubs and their events ] |
+| Club PR | The business: keyword-rich Instagram pages that post daily club content to generate leads (clubs / PR), given free first then charged. This automation is the content engine behind it. See `01-vision-and-goals.md`. |
+| Lead | A user who contacted a page and can be handed to a club/PR — free first, then paid |
+| Evergreen content | Posts that stay relevant over time (not tied to one event/date) — part of the daily mix |
 | Flow | An n8n workflow, named "Club PR - Flow [Letter] - [Purpose]" |
 | Reel | Short vertical video for social media (Instagram-style) |
 | Asset | A row in the master Google Sheet representing one piece of content (an image or video) tied to a club/event |
