@@ -25,22 +25,22 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
 
 ## Flow B — Reactive Reel Generation
 - **n8n workflow ID / link:** `FwhZhrEOxoFcbqen` — `https://fwe.gsm.mybluehost.me/workflow/FwhZhrEOxoFcbqen`
-- **Status:** shown as unpublished/draft in n8n as of 2026-09-16 (Publish button visible, not yet toggled live) — confirm actual live status.
+- **Status:** **Published/live** (confirmed 2026-09-17 — was shown as unpublished/draft on 2026-09-16, has since been published).
 - **Purpose:** Turns a tagged club/event asset (image or video) sitting in the Google Sheet into a posting-ready Instagram reel: builds the video, runs an AI quality check, writes an SEO caption, and queues it for posting — or routes it to a human on Telegram if it needs review.
 - **Trigger:** Schedule Trigger (runs periodically — confirm exact interval in the node).
 - **Inputs it needs:** Rows in the Google Sheet ("Sheet1") with `status = 'tagged'` and `fast_track = 'Y'`, or `status = 'needs_review'`. Each row carries: asset_id, source_type, club_name, event_name, event_date, area, vibe_tag, overlay_zone, fast_track, confidence, cloudinary_public_id (implied), telegram_caption, status, times_used.
 - **Steps (high level):**
   1. `Schedule Trigger` → `Get row(s) in sheet` (Google Sheets: read Sheet1) → `Filter` (keep only tagged+fast-tracked or needs-review rows).
   2. `Is Image?` (If node) branches on asset type.
-  3. **Image branch:** `Build Zoompan Video URL` (Code: constructs a Cloudinary `e_zoompan` URL with a text overlay of club_name + event_name, falling back to "Tonight") → `Render & Cache Video` (Cloudinary HTTP call, cloud `pemiahac`) → `Restore Fields After Render` (Code: re-attach original row data) → `Groq Vision QC Check` (HTTP POST to Groq's vision chat-completions API, judges legibility/cropping/contrast) → `Parse QC Result` → `QC Pass?` (If).
+  3. **Image branch:** `Build Zoompan Video URL` (Code: constructs a Cloudinary `e_zoompan` URL with a text overlay of club_name + event_name, falling back to "Tonight"; the `l_text:` layer includes `w_iw_mul_0.8,c_fit` as of 2026-09-17 so long names wrap within 80% of the image width instead of running off the frame) → `Render & Cache Video` (Cloudinary HTTP call, cloud `pemiahac`) → `Restore Fields After Render` (Code: re-attach original row data) → `Groq Vision QC Check` (HTTP POST to Groq's vision chat-completions API, judges legibility/cropping/contrast — it only judges the overlay text itself, not the underlying poster image Ashna already picked) → `Parse QC Result` → `QC Pass?` (If).
      - **True:** `Generate SEO Caption` → `Parse Caption Result` → `Shape Posting Queue Row` → `Append to Posting Queue` → `Mark as Posted` (update sheet).
      - **False:** `Notify Manual Review` (Telegram) → `Mark as Review` (update sheet).
   4. **Non-image branch:** `Is Video For Posting?` (If).
      - **True:** `Notify Non-Image Asset` (Telegram) → `Mark Non-Image Reviewed` (update sheet).
      - **False:** `Prepare Video For Posting` (Code) → feeds back into the notify/posting path.
 - **Outputs / where results go:** Passing image reels land in the **"Posting Queue" tab** of the "Club PR - Asset Bank & Queue" Google Sheet (row shape from `Shape Posting Queue Row`: asset_id, club_name, event_name, event_date, area, source_type, final_media_url, media_type, qc_status, qc_reason, caption, hashtags, status='queued', created_at, posted_at). The source row's `status`/`times_used` columns on "Sheet1" are updated throughout; failures/reviews generate a Telegram message to a human (chat routed per club via `asset_id.split('_')[0]`).
-- **Depends on:** Google Sheets credential ("Google Sheets account"), Cloudinary account (`pemiahac`), Groq API credential ("Club PR - Groq API" — used for both QC and caption generation), Telegram credential ("Club PR - Telegram Bot"), and whatever upstream flow sets `status`/`fast_track`/`vibe_tag` on new "Sheet1" rows (likely "Flow A" — name/ID unconfirmed).
-- **Known issues:** None recorded yet — add here as they come up.
+- **Depends on:** Google Sheets credential ("Google Sheets account"), Cloudinary account (`pemiahac`), Groq API credential ("Club PR - Groq API", model `qwen/qwen3.8-27b` as of 2026-09-17 — used for both QC and caption generation), Telegram credential ("Club PR - Telegram Bot"), and Flow A which sets `status`/`fast_track`/`vibe_tag` on new "Sheet1" rows.
+- **Known issues:** Fixed 2026-09-17 — text overlay was cropping long club+event names, causing false QC fails (see changelog). None currently open.
 - **Open questions:** What flow/process sets a row's initial `status`/`vibe_tag`/`overlay_zone` (Flow A)? What reads the "Posting Queue" tab to actually publish to Instagram/social? What is the Schedule Trigger's exact interval? Is `asset_id`'s prefix always a stable club identifier used consistently across flows?
 
 ---
@@ -51,14 +51,18 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
 - **Trigger:** Telegram Trigger (fires when a message/file is sent to the bot).
 - **Steps (high level):**
   1. `Telegram Trigger` → `Get a file` (download the sent image/video).
-  2. `If` (is it an image?).
+  2. `If` (is it an image? — checks `$binary.data.mimeType.startsWith('image/')`).
      - **Image:** `Edit Image` (resize) → Code → `HTTP Request` to Groq (vision auto-tagging) → Code.
-     - **Video:** Code path → later `Build Thumbnail URL` → `Groq Video Tag` (HTTP to Groq on the thumbnail) → `Parse Video Tag Result`.
-  3. `Upload an asset from file data` → Cloudinary (gets the `cloudinary_public_id`).
+     - **Non-image:** `Code in JavaScript3` (sets `source_type` = `'video'` / `'document'` / `'other'` from the Telegram message) → `Upload an asset from file data` (Cloudinary) → `Code in JavaScript2` → **`Is Video For AI Tag?`** (If node, checks `source_type === 'video'`).
+       - **True:** `Build Thumbnail URL` → `Groq Video Tag` (HTTP to Groq on the Cloudinary thumbnail frame) → `Parse Video Tag Result`.
+       - **False:** row is appended with blank AI tags and `status = 'needs_review'`.
+  3. `Upload an asset from file data` → Cloudinary (gets the `cloudinary_public_id`) — image branch does this separately from the video branch's own upload step above.
   4. `Append row in sheet` → writes a new row to **"Sheet1"** of "Club PR - Asset Bank & Queue" with all the AI tags + status.
 - **Outputs:** A new tagged row in "Sheet1" (the input Flow B reads).
-- **Depends on:** Telegram credential, Groq ("Club PR - Groq API"), Cloudinary, Google Sheets.
-- **Known issues:** None recorded yet — add here as they come up.
+- **Depends on:** Telegram credential, Groq ("Club PR - Groq API", model `qwen/qwen3.8-27b` as of 2026-09-17), Cloudinary, Google Sheets.
+- **Known issues:**
+  - Fixed 2026-09-17 — Telegram webhook can go stale silently (see `09-open-questions.md` known risks); Groq model access loss (see changelog).
+  - **Open as of 2026-09-17:** `Is Video For AI Tag?` was sending real videos (confirmed `source_type: "video"` in the input) to its false branch, skipping `Groq Video Tag` entirely and leaving the row blank/`needs_review`. A defensive fix is live but not yet confirmed with a passing live video — see `09-open-questions.md`.
 
 ---
 
