@@ -54,7 +54,7 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
   2. `If` (is it an image? — checks `$binary.data.mimeType.startsWith('image/')`).
      - **Image:** `Edit Image` (resize) → Code → `HTTP Request` to Groq (vision auto-tagging) → Code.
      - **Non-image:** `Code in JavaScript3` (sets `source_type` = `'video'` / `'document'` / `'other'` from the Telegram message) → `Upload an asset from file data` (Cloudinary) → `Code in JavaScript2` → **`Is Video For AI Tag?`** (If node, checks `source_type === 'video'`).
-       - **True:** `Build Thumbnail URL` → `Groq Video Tag` (HTTP to Groq on the Cloudinary thumbnail frame) → `Parse Video Tag Result`.
+       - **True:** `Build Thumbnail URL` (Code: turns the Cloudinary video URL into a JPG still via `/upload/so_0/` + `.jpg`) → `Groq Video Tag` (HTTP to Groq on that thumbnail; JSON body must be in **Expression** mode, `max_tokens` 800) → `Parse Video Tag Result`.
        - **False:** row is appended with blank AI tags and `status = 'needs_review'`.
   3. `Upload an asset from file data` → Cloudinary (gets the `cloudinary_public_id`) — image branch does this separately from the video branch's own upload step above.
   4. `Append row in sheet` → writes a new row to **"Sheet1"** of "Club PR - Asset Bank & Queue" with all the AI tags + status.
@@ -62,7 +62,8 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
 - **Depends on:** Telegram credential, Groq ("Club PR - Groq API", model `qwen/qwen3.8-27b` as of 2026-09-17), Cloudinary, Google Sheets.
 - **Known issues:**
   - Fixed 2026-09-17 — Telegram webhook can go stale silently (see `09-open-questions.md` known risks); Groq model access loss (see changelog).
-  - **Open as of 2026-09-17:** `Is Video For AI Tag?` was sending real videos (confirmed `source_type: "video"` in the input) to its false branch, skipping `Groq Video Tag` entirely and leaving the row blank/`needs_review`. A defensive fix is live but not yet confirmed with a passing live video — see `09-open-questions.md`.
+  - Fixed 2026-09-17 — **the entire video branch was broken by four stacked faults** (routing sent videos to the false branch; `Build Thumbnail URL` had a syntax error; `Groq Video Tag` had a malformed JSON body; that body was in Fixed instead of Expression mode, plus `max_tokens` over the Groq account limit). All four are fixed and published. The branch had never executed in production before this, which is why none of them had ever surfaced. Full write-up in `07-changelog.md`. Still to confirm: one real video running the whole chain — see `09-open-questions.md`.
+  - `Parse Video Tag Result` is the last node on that branch that has still never executed. It passes a syntax check but is unproven at runtime.
 
 ---
 

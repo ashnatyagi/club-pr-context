@@ -52,5 +52,16 @@ When you hit a red light: do all the safe prep you can, then give Ashna a **shor
 4. **Record** — update the relevant KB file + `07-changelog.md`. Leave the project readable for the next agent/thread.
 5. **Escalate only red-light items** to Ashna, batched and specific.
 
+## Debugging rule (added 2026-09-17, learned the hard way)
+A long, frustrating video-tagging outage came down to four separate faults stacked on top of each other, and it was twice reported as "fixed" when it wasn't. These rules exist so that doesn't repeat:
+
+- **Run it, don't read it.** A config that looks right on screen is not a verified fix. Execute the node against real data before saying it works. If there's no live trigger handy, copy the node into a throwaway workflow, feed it real input, run it, then archive the scratch workflow.
+- **Say "not confirmed" until it is confirmed.** If a fix hasn't been observed working, describe it as untested. Don't report a fix as done and make Ashna discover otherwise.
+- **A branch that has never executed is unverified, no matter how correct it looks.** n8n only reports an error when a node actually runs, so syntax errors and malformed bodies can sit in a dormant branch indefinitely. When a routing fix makes a dormant branch reachable, expect more faults behind it and walk the whole branch.
+- **Verify every node you touched, on its own path.** If one edit is applied to several nodes, "the others worked" says nothing about the one whose path is unreachable. That exact gap shipped a broken JSON body into `Groq Video Tag`.
+- **Don't verify with Retry on this instance** — it replays the original execution's snapshot and will keep reproducing bugs that are already fixed. Use a fresh trigger or a scratch workflow.
+- **When behaviour contradicts the saved config, suspect a stale compiled version.** Export the workflow JSON to confirm what's actually saved; if it's correct but behaviour disagrees, simplify the parameter, re-save and publish fresh to force a recompile.
+- **Own mistakes plainly in the changelog**, including which ones were ours. One of the four faults above was our own typo. Writing that down is what stops the next agent from trusting an unverified "verified".
+
 ## Handoff rule
 Because agents and threads change, **leave no context in your head only.** Before you finish: if you learned something durable or changed something, it goes into the right KB file and the changelog. The next agent should be able to pick up exactly where you left off by reading this base.
