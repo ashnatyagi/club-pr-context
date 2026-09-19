@@ -77,8 +77,8 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
   3. `Generate Listicle Caption` (HTTP to Groq).
   4. `Shape Posting Queue Row` → `Append to Posting Queue`; also `Build time…/Update row in sheet` to record usage.
 - **Outputs:** New row(s) in the **"Posting Queue"** tab, ready for Flow D.
-- **Depends on:** Google Sheets, Groq ("Club PR - Groq API").
-- **Known issues:** None recorded yet — add here as they come up.
+- **Depends on:** Google Sheets, Groq ("Club PR - Groq API", model qwen/qwen3.8-27b as of 2026-09-19).
+- **Known issues:** Fixed 2026-09-19 — Generate Listicle Caption was still on the deprecated qwen/qwen3.6-27b model. This was missed by both the 17 Sep migration (only covered the 3 vision calls) and the 19 Sep Flow B fix (only covered Generate SEO Caption), because nobody had grepped Flow C specifically for the old model name. Found via a git-history vs. live-JSON reconciliation requested by Ashna, not via an execution failure — Flow C's schedule trigger runs roughly once a day, so this had likely been silently failing listicle generation since 17 Sep without being noticed. Fixed by switching the model to qwen/qwen3.8-27b, published, and verified live via a fresh Execute workflow run — Groq call succeeded and the row flowed through to the real Posting Queue sheet. See 07-changelog.md.
 
 ---
 
@@ -95,7 +95,7 @@ Plus a helper: **Setup - Upload BG Music Tracks** (one-off utility, not part of 
      - **Carousel (multi-image):** `Split Media URLs` → `Create Carousel Child` (+ `Warm Cloudinary Cache`) → `Aggregate Child IDs` → `Create Carousel Container` → `Publish Carousel` → `Shape Posted Update`.
 - **Outputs:** Live Instagram post; Posting Queue row marked `posted` (with `posted_at`) or `failed`.
 - **Depends on:** Google Sheets, **Instagram Graph API (credential "Club PR - Instagram Access Token", Bearer)**, Cloudinary (media URLs), Telegram (failure alerts). Each queue row carries its own `ig_account_id`, so **one flow publishes to multiple Instagram pages**.
-- **Known issues:** None recorded yet — watch the Instagram token expiry / Graph API version (v24.0), the most likely silent break point.
+- **Known issues:** Watch the Instagram token expiry / Graph API version (v24.0), the most likely silent break point. Fixed 2026-09-19 — the carousel path (Create Carousel Child/Create Carousel Container/Publish Carousel) had no failure handling, unlike the reel path: any error there just killed the whole execution with no sheet update and no Telegram alert, silently leaving the row stuck as queued to be retried forever every 4 hours with zero visibility. Fixed by setting On Error = Continue (using error output) on all three carousel HTTP nodes and adding a new Shape Carousel Failed Update code node, wired from all three error outputs into the existing Mark as Post Failed to Notify Post Failed chain (now shared with the reel path); Notify Post Failed's message was generalized to read qc_reason from the incoming item instead of a hardcoded reel-only sentence. Published — not yet verified against a real failed carousel post (would require forcing a real Instagram publish failure, deliberately not done); confirm on the next real carousel failure or via a controlled test.
 
 ---
 
