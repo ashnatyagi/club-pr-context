@@ -22,9 +22,12 @@
 - [ ] Set up the GitHub token / access so n8n's HTTP nodes and other AI agents can pull this context automatically (see `README.md` Step 2).
 - [ ] Add a backup/restore plan for the Bluehost VPS and the master Google Sheet.
 
-## Needs a live test to close out (as of 2026-09-17)
-- [ ] **One real video through Flow A, end to end.** All four faults on the video path are fixed and published (see `07-changelog.md`), and `Groq Video Tag` has been proven working against a real Cloudinary thumbnail in a scratch workflow. What has *not* yet been observed is a single Telegram video running the whole chain — `Is Video For AI Tag?` (true) → `Build Thumbnail URL` → `Groq Video Tag` → `Parse Video Tag Result` → `Append row in sheet` — and landing a tagged row in Sheet1. `Parse Video Tag Result` is the one node on that branch that has still never executed; it passes a syntax check but has not been run.
-- [ ] If that run fails, read the failing node's error in the Executions tab directly. **Do not use "Retry" to test** — see the known risk below.
+## Resolved (more, 2026-09-19)
+- [x] **One real video through Flow A, end to end.** Confirmed working — execution #24649 (17 Sep) wrote a fully-tagged row for `1063557449_1918` (ILLUZION LUXE CLUB) to Sheet1. `Parse Video Tag Result` has now executed for real.
+- [x] Why did Flow B (video generation) make no visible progress after that? → Unrelated bug: `Generate SEO Caption` was still on the deprecated `qwen/qwen3.6-27b` model (missed in the 17 Sep migration), which crashed every Flow B execution before the video branch could run. Fixed 19 Sep — see `07-changelog.md`.
+
+## To decide (new, 2026-09-19)
+- [ ] **Should videos be able to auto-post at all, or is manual Telegram review always intended for them?** Right now every video, regardless of tagging confidence/fast_track, is routed by `Is Video For Posting?` to `Notify Non-Image Asset` (manual review) — the `Prepare Video For Posting` "post as-is" branch exists in the workflow but its condition never fires for any current row. If auto-posting for high-confidence/fast-tracked videos is wanted, that condition needs to be built out and tested the same way the image path was.
 
 ## Known risks
 - [ ] Single Bluehost VPS = single point of failure for all n8n flows; no confirmed backup/restore plan yet.
@@ -37,3 +40,4 @@
 - [ ] **A node can serve a stale compiled version after heavy publish/unpublish cycling.** Symptom: the saved config is provably correct (confirmed by exporting the workflow JSON) but execution behaves as if it were the old config. Remedy that worked: change the parameter to something simple, re-save, and publish fresh so the engine recompiles.
 - [ ] **Groq on-demand limit is 1000 output tokens per minute for this account.** Any node with `max_tokens` above that returns `Request too large ... Limit 1000`. Flow A's `Groq Video Tag` is now at 800. Check this before raising `max_tokens` anywhere.
 - [ ] **HTTP Request JSON bodies must be in Expression mode, not Fixed**, or `{{ ... }}` is sent as literal text. This silently produced `unsupported protocol` from Groq. Worth checking on any HTTP node whose body contains an expression.
+- [ ] **A bulk model-name migration missed a node because it wasn't grouped with the others.** On 17 Sep, 3 Groq *vision* nodes were switched qwen3.6→qwen3.8 together; `Generate SEO Caption` (a text-only Groq call in Flow B) was on the same deprecated model but wasn't part of that group, so it was missed and broke every Flow B run for ~35 hours before being caught (19 Sep). When migrating a model/credential, grep for *every* node using it, not just the ones doing the same kind of call.
